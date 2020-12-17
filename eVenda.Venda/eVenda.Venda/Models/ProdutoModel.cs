@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace eVenda.Venda.Models
+﻿namespace eVenda.Venda.Models
 {
 	public class ProdutoModel
 	{
-		public string CodigoProduto { get; set; }
-		public string NomeProduto { get; set; }
-		public decimal ValorProduto { get; set; }
-		public int QuantidadeProduto { get; set; }
+		public string Codigo { get; set; }
+		public string Nome { get; set; }
+		public decimal Valor { get; set; }
+		public int Quantidade { get; set; }
 	}
 }

@@ -1,44 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AutoMapper;
 using eVenda.Venda.Models;
-using Microsoft.AspNetCore.Http;
+using eVenda.Venda.Service;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
+using NSDomainModel = eVenda.Venda.DomainModel.Model;
 
 namespace eVenda.Venda.Controllers
 {
-    [Route("api/[controller]")]
+	[Route("api/[controller]")]
     [ApiController]
     public class VendaController : ControllerBase
     {
 
 		private readonly IConfiguration _configuration;
+		private readonly IMapper _mapper;
 
-		public VendaController(IConfiguration configuration)
+
+		public VendaController(IConfiguration configuration, IMapper mapper)
 		{
 			_configuration = configuration;
+			_mapper = mapper;
 		}
 
 
 		[HttpPost]
 		public ActionResult RealizaVenda([FromBody]VendaModel vendaModel)
 		{
-
-			var serviceBusConfig = _configuration.GetSection("ServiceBus");
-
-			var connectionString = serviceBusConfig.GetValue<string>("ConnectionString");
-			var topic = serviceBusConfig.GetValue<string>("TopicProdutoVendido");
-
-			var topicClient = new TopicClient(connectionString, topic);
-			var body = new UTF8Encoding().GetBytes(JsonConvert.SerializeObject(vendaModel));
-			var message = new Message(body);
-			topicClient.SendAsync(message);
-
+			GerenciaVenda gerenciaVenda = new GerenciaVenda(_configuration);
+			NSDomainModel.Venda venda = _mapper.Map<NSDomainModel.Venda>(vendaModel);
+			gerenciaVenda.RealizaVenda(venda);
 			return Ok();
 		}
     }

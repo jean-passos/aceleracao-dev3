@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AutoMapper;
 using eVenda.Venda.Models;
-using Microsoft.AspNetCore.Http;
+using eVenda.Venda.Service;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace eVenda.Venda.Controllers
 {
@@ -12,14 +10,18 @@ namespace eVenda.Venda.Controllers
 	[ApiController]
 	public class ProdutoController : ControllerBase
 	{
+		private readonly IMapper _mapper;
+
+		public ProdutoController(IMapper mapper)
+		{
+			_mapper = mapper;
+		}
+
 		[HttpGet]
 		public IEnumerable<ProdutoModel> ObtemProdutos()
 		{
-			return new List<ProdutoModel>
-			{
-				new ProdutoModel    { CodigoProduto = "", NomeProduto = "", QuantidadeProduto = 0, ValorProduto = 0}
-			};
+			GerenciaProduto gerenciaProduto = new GerenciaProduto();
+			return _mapper.Map<IEnumerable<ProdutoModel>>(gerenciaProduto.ObtemProdutosQuantidadeMaiorQueZero());
 		}
-
 	}
 }

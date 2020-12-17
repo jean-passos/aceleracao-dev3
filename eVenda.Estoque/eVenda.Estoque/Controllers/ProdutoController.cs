@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AutoMapper;
+using eVenda.Estoque.DomainModel.Model;
 using eVenda.Estoque.Model;
-using Microsoft.AspNetCore.Http;
+using eVenda.Estoque.Service;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace eVenda.Estoque.Controllers
 {
@@ -18,26 +14,21 @@ namespace eVenda.Estoque.Controllers
 	{
 
 		private readonly IConfiguration _configuration;
+		private readonly IMapper _mapper;
 
-		public ProdutoController(IConfiguration configuration)
+
+		public ProdutoController(IConfiguration configuration, IMapper mapper)
 		{
 			_configuration = configuration;
+			_mapper = mapper;
 		}
 
 		[HttpPost]
 		public ActionResult CriaProduto([FromBody]ProdutoModel produtoModel)
 		{
-
-			var serviceBusConfiguration = _configuration.GetSection("ServiceBus");
-			var connectionString = serviceBusConfiguration.GetValue<string>("ConnectionString");
-			var topicName = serviceBusConfiguration.GetValue<string>("TopicProdutoCriado");
-
-			var topicClient = new TopicClient(connectionString, topicName);
-
-			UTF8Encoding encoding = new UTF8Encoding(false);
-			var messageBody = encoding.GetBytes(JsonConvert.SerializeObject(produtoModel));
-			var sendMessage = new Message(messageBody);
-			topicClient.SendAsync(sendMessage);
+			GerenciaProduto gerenciaProduto = new GerenciaProduto(_configuration);
+			Produto produto = _mapper.Map<Produto>(produtoModel);
+			gerenciaProduto.IncluiProduto(produto);
 
 			return Ok();
 		}
@@ -45,16 +36,9 @@ namespace eVenda.Estoque.Controllers
 		[HttpPut]
 		public ActionResult AtualizaProduto([FromBody]ProdutoModel produtoModel)
 		{
-			var serviceBusConfiguration = _configuration.GetSection("ServiceBus");
-			var connectionString = serviceBusConfiguration.GetValue<string>("ConnectionString");
-			var topicName = serviceBusConfiguration.GetValue<string>("TopicProdutoAtualizado");
-
-			var topicClient = new TopicClient(connectionString, topicName);
-
-			UTF8Encoding encoding = new UTF8Encoding(false);
-			var messageBody = encoding.GetBytes(JsonConvert.SerializeObject(produtoModel));
-			var sendMessage = new Message(messageBody);
-			topicClient.SendAsync(sendMessage);
+			GerenciaProduto gerenciaProduto = new GerenciaProduto(_configuration);
+			Produto produto = _mapper.Map<Produto>(produtoModel);
+			gerenciaProduto.AlteraProduto(produto);
 
 			return Ok();
 		}
@@ -62,13 +46,10 @@ namespace eVenda.Estoque.Controllers
 		[HttpGet]
 		public IEnumerable<ProdutoModel> ObtemListaDeProdutos()
 		{
-			List<ProdutoModel> listaDeProdutos = new List<ProdutoModel>
-			{
-				new ProdutoModel{ CodigoProduto = "abc123", NomeProduto = "Produto Tal", QuantidadeProduto = 10, ValorProduto = 100m },
-				new ProdutoModel{ CodigoProduto = "cba321", NomeProduto = "Outro Produto", QuantidadeProduto = 15, ValorProduto = 27m }
-			};
-
-			return listaDeProdutos;
+			GerenciaProduto gerenciaProduto = new GerenciaProduto(_configuration);
+			var entities = gerenciaProduto.ObtemTodosProdutos();
+			var listaRetorno = _mapper.Map<IEnumerable<ProdutoModel>>(entities);
+			return listaRetorno;
 		}
 	}
 }
