@@ -11,17 +11,20 @@ namespace eVenda.Venda.Service
 
 		public IEnumerable<Produto> ObtemProdutosQuantidadeMaiorQueZero()
 		{
+			return produtoRepository.ObterComQuantidadeMaiorZero();
+		}
 
+		public void IncluiProduto(Produto produto)
+		{
+			produtoRepository.Add(produto);
+		}
 
-			
-
-
-
-			return new List<Produto>
-			{
-				new Produto    { Id = 1, Codigo = "123", Nome = "Nome 01", Quantidade = 100, Valor = 10m},
-				new Produto    { Id = 2, Codigo = "456", Nome = "Nome 02", Quantidade = 55, Valor = 12.17m}
-			};
+		public void AlteraProduto(Produto produtoAlterado)
+		{
+			Produto produto = produtoRepository.ObtemProdutoPeloCodigo(produtoAlterado.Codigo);
+			produto.Valor = produtoAlterado.Valor;
+			produto.Quantidade = produtoAlterado.Quantidade;
+			produtoRepository.Update(produto);
 		}
 	}
 }

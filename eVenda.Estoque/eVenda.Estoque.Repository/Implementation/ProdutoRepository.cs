@@ -31,6 +31,11 @@ namespace eVenda.Estoque.Repository.Implementation
 						.Where(p => p.Codigo.Equals(codigo, StringComparison.CurrentCultureIgnoreCase) || p.Nome.Equals(nome, StringComparison.CurrentCultureIgnoreCase));
 		}
 
+		public Produto ObtemProdutoPorCodigo(string codigo)
+		{
+			return _estoqueContext.Produto.SingleOrDefault(p => p.Codigo.Equals(codigo, StringComparison.CurrentCultureIgnoreCase));
+		}
+
 
 		public void Update(Produto entity)
 		{

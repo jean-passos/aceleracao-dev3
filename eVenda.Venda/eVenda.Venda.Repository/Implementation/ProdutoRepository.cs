@@ -14,5 +14,12 @@ namespace eVenda.Venda.Repository.Implementation
 			return _vendaContext.Produto.Where(p => p.Quantidade > 0);
 		}
 
+		public Produto ObtemProdutoPeloCodigo(string codigo)
+		{
+			return _vendaContext.Produto.SingleOrDefault(p => p.Codigo.Equals(codigo, StringComparison.CurrentCultureIgnoreCase));
+		}
+
+
+
 	}
 }

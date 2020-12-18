@@ -15,11 +15,5 @@ namespace eVenda.Venda.Repository.Implementation
 			_vendaContext.Update(entity.Produto);
 			_vendaContext.SaveChanges();
 		}
-
-		public NSDomainModel.Produto ObtemProdutoPeloCodigo(string codigo)
-		{
-			return _vendaContext.Produto.SingleOrDefault(p => p.Codigo.Equals(codigo, StringComparison.CurrentCultureIgnoreCase));
-		}
-
 	}
 }

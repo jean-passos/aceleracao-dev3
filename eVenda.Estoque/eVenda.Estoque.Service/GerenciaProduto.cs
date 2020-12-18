@@ -1,13 +1,12 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Text;
-using eVenda.Estoque.DomainModel.Model;
+﻿using eVenda.Estoque.DomainModel.Model;
 using eVenda.Estoque.Repository.Implementation;
+using eVenda.Estoque.Service.ServiceException;
 using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using eVenda.Estoque.Service.ServiceException;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace eVenda.Estoque.Service
 {
@@ -15,6 +14,11 @@ namespace eVenda.Estoque.Service
 	{
 
 		private readonly IConfiguration _configuration;
+
+		public GerenciaProduto()
+		{
+
+		}
 
 		public GerenciaProduto(IConfiguration configuration)
 		{
@@ -41,6 +45,7 @@ namespace eVenda.Estoque.Service
 			produtoRepository.Add(produto);
 
 			//*************************************************************************
+			produto.Id = 0;
 			var serviceBusConfiguration = _configuration.GetSection("ServiceBus");
 			
 			var connectionString = serviceBusConfiguration.GetValue<string>("ConnectionString");
@@ -85,6 +90,14 @@ namespace eVenda.Estoque.Service
 		public IEnumerable<Produto> ObtemTodosProdutos()
 		{
 			return new ProdutoRepository().ObtemTodosProdutos();
+		}
+
+		public void AtualizaProdutoVendido(Produto produtoVendido)
+		{
+			ProdutoRepository produtoRepository = new ProdutoRepository();
+			var produto = produtoRepository.ObtemProdutoPorCodigo(produtoVendido.Codigo);
+			produto.Quantidade = produtoVendido.Quantidade;
+			produtoRepository.Update(produto);
 		}
 	}
 }

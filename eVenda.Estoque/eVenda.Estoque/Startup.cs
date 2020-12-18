@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using eVenda.Estoque.Map;
+using eVenda.Estoque.ServiceBusProcess;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace eVenda.Estoque
 {
@@ -31,6 +26,8 @@ namespace eVenda.Estoque
 			}).CreateMapper();
 
 			services.AddSingleton(mapConfiguration);
+
+			services.AddHostedService<ProdutoVendidoServiceReader>();
 
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 		}

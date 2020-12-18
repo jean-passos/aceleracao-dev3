@@ -11,7 +11,7 @@ namespace eVenda.Venda.Repository
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
-			optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=VendaDb;Trusted_Connection=True");
+			optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=VendaDb;Trusted_Connection=True;");
 		}
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)

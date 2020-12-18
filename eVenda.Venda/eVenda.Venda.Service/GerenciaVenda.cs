@@ -11,7 +11,7 @@ namespace eVenda.Venda.Service
 	{
 		private readonly IConfiguration _configuration;
 		private readonly VendaRepository _vendaRepository = new VendaRepository();
-
+		private readonly ProdutoRepository _produtoRepository = new ProdutoRepository();
 
 		public GerenciaVenda(IConfiguration configuration)
 		{
@@ -21,7 +21,8 @@ namespace eVenda.Venda.Service
 
 		public void RealizaVenda(NSDomainModel.Venda venda)
 		{
-			var produto = _vendaRepository.ObtemProdutoPeloCodigo(venda.Produto.Codigo);
+
+			var produto = _produtoRepository.ObtemProdutoPeloCodigo(venda.Produto.Codigo);
 			produto.Quantidade -= venda.QuantidadeVendida;
 
 			venda.Produto = produto;

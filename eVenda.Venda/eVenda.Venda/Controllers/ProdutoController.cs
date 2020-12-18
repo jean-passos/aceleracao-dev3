@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using eVenda.Venda.DomainModel.Model;
 using eVenda.Venda.Models;
 using eVenda.Venda.Service;
 using Microsoft.AspNetCore.Mvc;
