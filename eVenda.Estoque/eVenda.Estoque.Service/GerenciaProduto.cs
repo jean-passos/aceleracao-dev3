@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using eVenda.Estoque.DomainModel.Model;
+using eVenda.Estoque.Repository.Implementation;
 using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using eVenda.Estoque.Service.ServiceException;
 
 namespace eVenda.Estoque.Service
 {
@@ -20,9 +23,25 @@ namespace eVenda.Estoque.Service
 
 		public void IncluiProduto(Produto produto)
 		{
+
+			if (produto.Quantidade < 0)
+				throw new QuantidadeAbaixoZeroException();
+
+			if (produto.Valor < 0)
+				throw new ValorAbaixoZeroException();
+
+
+			//*************************************************************************
+			ProdutoRepository produtoRepository = new ProdutoRepository();
+
+			var produtos = produtoRepository.ObtemProdutosPorCodigoNome(produto.Codigo, produto.Nome);
+			if(produtos != null && produtos.Count() > 0)
+				throw new ProdutoExistenteException();
+
+			produtoRepository.Add(produto);
+
+			//*************************************************************************
 			var serviceBusConfiguration = _configuration.GetSection("ServiceBus");
-
-
 			
 			var connectionString = serviceBusConfiguration.GetValue<string>("ConnectionString");
 			var topicName = serviceBusConfiguration.GetValue<string>("TopicProdutoCriado");
@@ -37,6 +56,20 @@ namespace eVenda.Estoque.Service
 
 		public void AlteraProduto(Produto produto)
 		{
+			if (produto.Quantidade < 0)
+				throw new QuantidadeAbaixoZeroException();
+
+			if (produto.Valor < 0)
+				throw new ValorAbaixoZeroException();
+
+			ProdutoRepository produtoRepository = new ProdutoRepository();
+
+			var produtos = produtoRepository.ObtemProdutosPorCodigoNome(produto.Codigo, produto.Nome);
+			if (produtos != null && produtos.Count() > 0)
+				throw new ProdutoExistenteException();
+
+			produtoRepository.Update(produto);
+
 			var serviceBusConfiguration = _configuration.GetSection("ServiceBus");
 			var connectionString = serviceBusConfiguration.GetValue<string>("ConnectionString");
 			var topicName = serviceBusConfiguration.GetValue<string>("TopicProdutoAtualizado");
@@ -51,16 +84,7 @@ namespace eVenda.Estoque.Service
 
 		public IEnumerable<Produto> ObtemTodosProdutos()
 		{
-			List<Produto> listaDeProdutos = new List<Produto>
-			{
-				new Produto{ Id = 1, Codigo = "abc123", Nome = "Produto Tal", Quantidade = 10, Valor = 100m },
-				new Produto{ Id = 2, Codigo= "cba321", Nome = "Outro Produto", Quantidade = 15, Valor = 27m }
-			};
-
-			return listaDeProdutos;
-
+			return new ProdutoRepository().ObtemTodosProdutos();
 		}
-
-
 	}
 }

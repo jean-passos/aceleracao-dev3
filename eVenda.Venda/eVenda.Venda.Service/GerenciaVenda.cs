@@ -1,4 +1,5 @@
-﻿using Microsoft.Azure.ServiceBus;
+﻿using eVenda.Venda.Repository.Implementation;
+using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Text;
@@ -9,6 +10,8 @@ namespace eVenda.Venda.Service
 	public class GerenciaVenda
 	{
 		private readonly IConfiguration _configuration;
+		private readonly VendaRepository _vendaRepository = new VendaRepository();
+
 
 		public GerenciaVenda(IConfiguration configuration)
 		{
@@ -18,13 +21,21 @@ namespace eVenda.Venda.Service
 
 		public void RealizaVenda(NSDomainModel.Venda venda)
 		{
+			var produto = _vendaRepository.ObtemProdutoPeloCodigo(venda.Produto.Codigo);
+			produto.Quantidade -= venda.QuantidadeVendida;
+
+			venda.Produto = produto;
+
+			_vendaRepository.Add(venda);
+
+
 			var serviceBusConfig = _configuration.GetSection("ServiceBus");
 
 			var connectionString = serviceBusConfig.GetValue<string>("ConnectionString");
 			var topic = serviceBusConfig.GetValue<string>("TopicProdutoVendido");
 
 			var topicClient = new TopicClient(connectionString, topic);
-			var body = new UTF8Encoding().GetBytes(JsonConvert.SerializeObject(venda));
+			var body = new UTF8Encoding().GetBytes(JsonConvert.SerializeObject(venda.Produto));
 			var message = new Message(body);
 			topicClient.SendAsync(message);
 		}

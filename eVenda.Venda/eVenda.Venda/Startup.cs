@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using eVenda.Venda.Map;
+using eVenda.Venda.ServiceBusProcess;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +23,10 @@ namespace eVenda.Venda
 			var configuration = new MapperConfiguration(cfg => cfg.AddProfile(new VendaMapProfile())).CreateMapper();
 
 			services.AddSingleton(configuration);
+
+			services.AddHostedService<ProdutoCriadoServiceReader>();
+			services.AddHostedService<ProdutoAlteradoServiceReader>();
+
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 		}
 
