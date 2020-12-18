@@ -6,24 +6,8 @@ using System.Linq;
 
 namespace eVenda.Estoque.Repository.Implementation
 {
-	public class ProdutoRepository : IRepository<Produto>
+	public class ProdutoRepository : RepositoryBase<Produto>
 	{
-
-		private readonly EstoqueContext _estoqueContext = new EstoqueContext();
-
-
-		public void Add(Produto entity)
-		{
-			_estoqueContext.Add(entity);
-			_estoqueContext.SaveChanges();
-		}
-
-		public Produto GetByPk(long id)
-		{
-			return _estoqueContext.Produto.SingleOrDefault(p => p.Id == id);
-		}
-
-
 		public IEnumerable<Produto> ObtemProdutosPorCodigoNome(string codigo, string nome)
 		{
 			return _estoqueContext
@@ -36,17 +20,9 @@ namespace eVenda.Estoque.Repository.Implementation
 			return _estoqueContext.Produto.SingleOrDefault(p => p.Codigo.Equals(codigo, StringComparison.CurrentCultureIgnoreCase));
 		}
 
-
-		public void Update(Produto entity)
-		{
-			_estoqueContext.Update(entity);
-			_estoqueContext.SaveChanges();
-		}
-
 		public IEnumerable<Produto> ObtemTodosProdutos()
 		{
 			return _estoqueContext.Produto;
 		}
-
 	}
 }

@@ -2,6 +2,7 @@
 using eVenda.Estoque.Service;
 using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
 using System.Text;
@@ -12,13 +13,16 @@ namespace eVenda.Estoque.ServiceBusProcess
 {
 	public class ProdutoVendidoServiceReader : BackgroundService
 	{
+		private readonly ServiceBusSubscriptionSettings _subscriptionSettings;
+
+		public ProdutoVendidoServiceReader(IOptions<ServiceBusSubscriptionSettings> options)
+		{
+			_subscriptionSettings = options.Value;
+		}
+
 		protected override Task ExecuteAsync(CancellationToken stoppingToken)
 		{
-			string connectionString = "Endpoint=sb://bus-aceldev3-jeanpassos.servicebus.windows.net/;SharedAccessKeyName=SendListen;SharedAccessKey=vSbrNpLYY0HT/wsrSoV8eIL9Ir2t8EKLYb9wM9pGnCw=";
-			string topic = "produtovendido";
-			string subscription = "ProdutoVendidoService";
-
-			var subscriptionClient = new SubscriptionClient(connectionString, topic, subscription);
+			var subscriptionClient = new SubscriptionClient(_subscriptionSettings.ConnectionString, _subscriptionSettings.TopicProdutoVendido, _subscriptionSettings.SubscriptionProdutoVendido);
 			var messageHandlerOptions = new MessageHandlerOptions(ExceptionReceiveHandler)
 			{
 				MaxConcurrentCalls = 1,
@@ -30,7 +34,7 @@ namespace eVenda.Estoque.ServiceBusProcess
 			return Task.CompletedTask;
 		}
 
-		private Task ProcessMessageAsync(Message message, CancellationToken arg2)
+		private Task ProcessMessageAsync(Message message, CancellationToken cancellationToken)
 		{
 			var produto = JsonConvert.DeserializeObject<Produto>(new UTF8Encoding().GetString(message.Body));
 			GerenciaProduto gerenciaProduto = new GerenciaProduto();

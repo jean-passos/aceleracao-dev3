@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eVenda.Venda.DomainModel", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eVenda.Venda.Service", "eVenda.Venda.Service\eVenda.Venda.Service.csproj", "{43E72DE5-3A52-43C2-8A34-75B645DBE649}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eVenda.Venda.Repository", "eVenda.Venda.Repository\eVenda.Venda.Repository.csproj", "{35541CA9-4F1B-4224-8E7D-7DA747849B5C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eVenda.Venda.Repository", "eVenda.Venda.Repository\eVenda.Venda.Repository.csproj", "{35541CA9-4F1B-4224-8E7D-7DA747849B5C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

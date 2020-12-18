@@ -29,6 +29,9 @@ namespace eVenda.Estoque
 
 			services.AddHostedService<ProdutoVendidoServiceReader>();
 
+			services.Configure<ServiceBusSubscriptionSettings>(Configuration.GetSection("ServiceBusSubscription"));
+
+
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 		}
 

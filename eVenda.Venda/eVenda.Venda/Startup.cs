@@ -24,6 +24,8 @@ namespace eVenda.Venda
 
 			services.AddSingleton(configuration);
 
+			services.Configure<ServiceBusSubscriptionSettings>(Configuration.GetSection("ServiceBusSubscription"));
+
 			services.AddHostedService<ProdutoCriadoServiceReader>();
 			services.AddHostedService<ProdutoAlteradoServiceReader>();
 

@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using eVenda.Venda.Models;
 using eVenda.Venda.Service;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using System;
 using NSDomainModel = eVenda.Venda.DomainModel.Model;
 
 namespace eVenda.Venda.Controllers
@@ -11,25 +13,27 @@ namespace eVenda.Venda.Controllers
     [ApiController]
     public class VendaController : ControllerBase
     {
-
-		private readonly IConfiguration _configuration;
 		private readonly IMapper _mapper;
-
 
 		public VendaController(IConfiguration configuration, IMapper mapper)
 		{
-			_configuration = configuration;
 			_mapper = mapper;
 		}
-
 
 		[HttpPost]
 		public ActionResult RealizaVenda([FromBody]VendaModel vendaModel)
 		{
-			GerenciaVenda gerenciaVenda = new GerenciaVenda(_configuration);
-			NSDomainModel.Venda venda = _mapper.Map<NSDomainModel.Venda>(vendaModel);
-			gerenciaVenda.RealizaVenda(venda);
-			return Ok();
+			try
+			{
+				GerenciaVenda gerenciaVenda = new GerenciaVenda();
+				NSDomainModel.Venda venda = _mapper.Map<NSDomainModel.Venda>(vendaModel);
+				gerenciaVenda.RealizaVenda(venda);
+				return Ok();
+			}
+			catch (Exception exception)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+			}
 		}
     }
 }
