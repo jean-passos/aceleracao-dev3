@@ -76,17 +76,7 @@ namespace eVenda.Estoque.Controllers
 				var requestError = new RequestErrorModel(nameof(produtoModel.Quantidade), "Valor não pode ser menor do que zero");
 				return BadRequest(requestError);
 			}
-			catch (ProdutoExistenteException)
-			{
-				string propriedades = $"{nameof(produtoModel.Codigo)}/{nameof(produtoModel.Nome)}";
-				var requestError = new RequestErrorModel(propriedades, "Produto já existente");
-				return BadRequest(requestError);
-			}
-			catch (Exception)
-			{
-
-				throw;
-			}
+			catch (Exception) { throw; }
 		}
 
 		[HttpGet]
