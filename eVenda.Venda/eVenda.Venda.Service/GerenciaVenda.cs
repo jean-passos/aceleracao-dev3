@@ -17,7 +17,7 @@ namespace eVenda.Venda.Service
 
 			venda.Produto = produto;
 			_vendaRepository.Add(venda);
-			new ProcessaServiceBus<NSDomainModel.Produto>().EnviaMensagem(venda.Produto, "TopicProdutoVendido");
+			new ProcessaServiceBus<NSDomainModel.Produto>().EnviaMensagem(venda.Produto, "produtovendido");
 		}
 	}
 }
